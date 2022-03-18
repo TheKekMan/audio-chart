@@ -1,5 +1,5 @@
 import { IconButton, styled } from "@mui/material";
-import { Button, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 
 export const AppMain = styled("div")(({ theme }) => ({
   textAlign: "center",
