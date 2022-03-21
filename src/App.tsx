@@ -26,6 +26,7 @@ export interface VisualizerSettings {
 function App() {
   const [audioBuffer, setAudioBuffer] = useState<ArrayBuffer>();
   const [fileSelected, setFileSelected] = useState(false);
+  const [file, setFile] = useState<File>();
   const [isStop, setIsStop] = useState(true);
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState<VisualizerSettings>({
@@ -67,6 +68,7 @@ function App() {
     let file = e.target.files[0],
       reader = new FileReader();
     if (file.type.includes("audio")) {
+      setFile(file);
       reader.onloadend = handleFile;
       reader.readAsArrayBuffer(file);
     } else {

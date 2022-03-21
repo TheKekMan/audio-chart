@@ -7,8 +7,9 @@ import { PlayButton, BarMain } from "./BarVisualizer.style";
 import StopIcon from "@mui/icons-material/Stop";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
-import { Stack } from "@mui/material";
+import { Box, Slider, Stack } from "@mui/material";
 import { VisualizerSettings } from "../../App";
+import { VolumeDown, VolumeUp } from "@mui/icons-material";
 Chart.register(CategoryScale);
 Chart.register(gradient);
 
@@ -34,8 +35,16 @@ export default function BarVisualizer({
   const [musicArray, setMusicArray] = useState<number[]>();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-
+  const [volume, setVolume] = React.useState<number>(-1);
+  const [gainNode, setGainNode] = React.useState<GainNode>();
   let hook = true;
+
+  const handleVolumeChange = (event: Event, newValue: number | number[]) => {
+    setVolume(newValue as number);
+    if (gainNode) {
+      gainNode.gain.value = volume;
+    }
+  };
 
   const audioVisualizerLogic = () => {
     const audioContext = new (window.AudioContext ||
@@ -54,13 +63,17 @@ export default function BarVisualizer({
       audioContext.state === "running"
         ? audioContext.suspend()
         : audioContext.resume();
-      console.log(audioContext);
-      console.log(source.buffer);
       setIsPlaying((prev) => !prev);
     };
 
     let muteButton = buttonRef.current;
     if (muteButton) muteButton.onclick = () => mutePlay();
+
+    //config audio sound
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = volume;
+    source.connect(gainNode).connect(audioContext.destination);
+    setGainNode(gainNode);
 
     //config audio analyzer
     const analyser = audioContext.createAnalyser();
@@ -181,6 +194,20 @@ export default function BarVisualizer({
           Stop
         </PlayButton>
       </Stack>
+      <Box sx={{ width: 200, marginTop: "1em" }}>
+        <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+          <VolumeDown />
+          <Slider
+            aria-label="Volume"
+            value={volume}
+            min={-2}
+            max={-1}
+            step={0.01}
+            onChange={handleVolumeChange}
+          />
+          <VolumeUp />
+        </Stack>
+      </Box>
       <Bar
         style={{ maxHeight: "85vh", maxWidth: "100vw" }}
         data={data}
