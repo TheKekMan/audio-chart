@@ -77,18 +77,20 @@ function App() {
       <AppHeader>Audio Visualizer</AppHeader>
       <div className="App">
         {fileSelected && !isStop ? null : (
-          <label htmlFor="contained-button-file">
-            <Input
-              id="contained-button-file"
-              type="file"
-              hidden
-              onChange={handleAudioSelected}
-            />
-            <AppButton>Upload Audio</AppButton>
+          <>
+            <label htmlFor="contained-button-file">
+              <Input
+                id="contained-button-file"
+                type="file"
+                hidden
+                onChange={handleAudioSelected}
+              />
+              <AppButton>Upload Audio</AppButton>
+            </label>
             <SettingsButton onClick={handleClickOpen}>
               <SettingsIcon />
             </SettingsButton>
-          </label>
+          </>
         )}
         <div>
           {audioBuffer && !isStop ? (

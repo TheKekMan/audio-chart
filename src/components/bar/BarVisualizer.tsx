@@ -152,7 +152,6 @@ export default function BarVisualizer({
       {
         data: musicArray,
         fill: 1,
-
         gradient: {
           backgroundColor: {
             axis: "y",
