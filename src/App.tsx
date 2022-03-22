@@ -11,14 +11,12 @@ import SettingsDialog from "./components/settings/SettingsDialog";
 import SettingsIcon from "@mui/icons-material/Settings";
 
 export interface VisualizerSettings {
-  h: {
-    0: string;
-    50: string;
-    100: string;
-    150: string;
-    200: string;
-    250: string;
-  };
+  h0: string;
+  h50: string;
+  h100: string;
+  h150: string;
+  h200: string;
+  h250: string;
   loop: boolean;
   fftSize: number;
 }
@@ -30,14 +28,12 @@ function App() {
   const [isStop, setIsStop] = useState(true);
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState<VisualizerSettings>({
-    h: {
-      0: "#880afc",
-      50: "#880afc",
-      100: "#880afc",
-      150: "#b975ff",
-      200: "#b975ff",
-      250: "#b975ff",
-    },
+    h0: "#880afc",
+    h50: "#880afc",
+    h100: "#880afc",
+    h150: "#b975ff",
+    h200: "#b975ff",
+    h250: "#b975ff",
     loop: true,
     fftSize: 256,
   });

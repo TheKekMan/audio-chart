@@ -107,12 +107,13 @@ export default function BarVisualizer({
 
   const options = {
     animation: {
-      duration: 100,
+      duration: 50,
     },
     easing: "linear",
     responsive: true,
     scales: {
       x: {
+        display: false,
         ticks: {
           display: false,
         },
@@ -121,6 +122,7 @@ export default function BarVisualizer({
         },
       },
       y: {
+        display: false,
         max: 300,
         ticks: {
           display: false,
@@ -155,12 +157,12 @@ export default function BarVisualizer({
           backgroundColor: {
             axis: "y",
             colors: {
-              0: settings.h["0"],
-              50: settings.h["50"],
-              100: settings.h["100"],
-              150: settings.h["150"],
-              200: settings.h["200"],
-              250: settings.h["250"],
+              0: settings.h0,
+              50: settings.h50,
+              100: settings.h100,
+              150: settings.h150,
+              200: settings.h200,
+              250: settings.h250,
             },
           },
         },
