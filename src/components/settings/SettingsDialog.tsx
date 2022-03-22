@@ -1,13 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
+import PaletteIcon from "@mui/icons-material/Palette";
 import { TransitionProps } from "@mui/material/transitions";
 import { VisualizerSettings } from "../../App";
-import { Checkbox, FormControl, Stack } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  Stack,
+} from "@mui/material";
 import { LoopLabel, SettingsInput } from "./SettingsDialog.style";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -15,6 +22,8 @@ import { Bar } from "react-chartjs-2";
 import { CategoryScale } from "chart.js";
 import Chart from "chart.js/auto";
 import gradient from "chartjs-plugin-gradient";
+import { ColorPicker, toColor, useColor } from "react-color-palette";
+require("react-color-palette/lib/css/styles.css");
 Chart.register(CategoryScale);
 Chart.register(gradient);
 
@@ -38,6 +47,40 @@ const SettingsDialog = ({
   setSettings: any;
   settings: VisualizerSettings;
 }) => {
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [hook, setHook] = useState<string>();
+  const [color, setColor] = useColor("hex", "#121212");
+  const [innerSettings, setInnerSettings] =
+    useState<VisualizerSettings>(settings);
+
+  console.log(settings);
+
+  const handlePickerClose = () => {
+    setPickerOpen(false);
+    setHook("");
+  };
+
+  const handleClickOpen = (field: string) => {
+    setHook(field);
+    const color = toColor("hex", innerSettings[field]);
+    setColor(color);
+    setPickerOpen(true);
+  };
+
+  const PickerAdornment = ({ field }: { field: string }) => {
+    return (
+      <InputAdornment position="end">
+        <IconButton
+          aria-label="toggle picker"
+          onClick={() => handleClickOpen(field)}
+          edge="end"
+        >
+          <PaletteIcon />
+        </IconButton>
+      </InputAdornment>
+    );
+  };
+
   const formik = useFormik({
     initialValues: settings,
     validationSchema: Yup.object({
@@ -74,8 +117,8 @@ const SettingsDialog = ({
 
       loop: Yup.boolean().required(),
     }),
-    onSubmit: (values) => {
-      setSettings(values);
+    onSubmit: () => {
+      setSettings(innerSettings);
       handleClose();
     },
   });
@@ -119,11 +162,11 @@ const SettingsDialog = ({
       },
     },
   };
-  const musicArray = Array.from({ length: settings.fftSize / 4 }, () =>
+  const musicArray = Array.from({ length: innerSettings.fftSize / 4 }, () =>
     Math.floor(Math.random() * 300)
   ).sort((a, b) => b - a);
-  const emptyArray = new Array(settings.fftSize / 4);
-  const labels = emptyArray.fill(" ", 0, settings.fftSize / 4);
+  const emptyArray = new Array(innerSettings.fftSize / 4);
+  const labels = emptyArray.fill(" ", 0, innerSettings.fftSize / 4);
   const data = {
     labels,
     datasets: [
@@ -134,12 +177,12 @@ const SettingsDialog = ({
           backgroundColor: {
             axis: "y",
             colors: {
-              0: settings.h0,
-              50: settings.h50,
-              100: settings.h100,
-              150: settings.h150,
-              200: settings.h200,
-              250: settings.h250,
+              0: innerSettings.h0,
+              50: innerSettings.h50,
+              100: innerSettings.h100,
+              150: innerSettings.h150,
+              200: innerSettings.h200,
+              250: innerSettings.h250,
             },
           },
         },
@@ -149,9 +192,16 @@ const SettingsDialog = ({
 
   useEffect(() => {
     if (formik.isValid) {
-      setSettings(formik.values);
+      setInnerSettings(formik.values);
     }
   }, [formik.isValid]);
+
+  useEffect(() => {
+    if (hook) {
+      formik.setFieldValue(hook, color.hex, true);
+      setInnerSettings(formik.values);
+    }
+  }, [color]);
 
   return (
     <>
@@ -175,6 +225,9 @@ const SettingsDialog = ({
                     onChange={formik.handleChange}
                     error={!!formik.errors.h0}
                     helperText={formik.errors.h0 ? formik.errors.h0 : null}
+                    InputProps={{
+                      endAdornment: <PickerAdornment field={"h0"} />,
+                    }}
                   />
                   <SettingsInput
                     name="h50"
@@ -183,6 +236,9 @@ const SettingsDialog = ({
                     onChange={formik.handleChange}
                     error={!!formik.errors.h50}
                     helperText={formik.errors.h50 ? formik.errors.h50 : null}
+                    InputProps={{
+                      endAdornment: <PickerAdornment field={"h50"} />,
+                    }}
                   />
                   <SettingsInput
                     name="h100"
@@ -191,6 +247,9 @@ const SettingsDialog = ({
                     onChange={formik.handleChange}
                     error={!!formik.errors.h100}
                     helperText={formik.errors.h100 ? formik.errors.h100 : null}
+                    InputProps={{
+                      endAdornment: <PickerAdornment field={"h100"} />,
+                    }}
                   />
                 </Stack>
                 <Stack direction={"column"} spacing={2}>
@@ -201,6 +260,9 @@ const SettingsDialog = ({
                     onChange={formik.handleChange}
                     error={!!formik.errors.h150}
                     helperText={formik.errors.h150 ? formik.errors.h150 : null}
+                    InputProps={{
+                      endAdornment: <PickerAdornment field={"h150"} />,
+                    }}
                   />
                   <SettingsInput
                     name="h200"
@@ -209,6 +271,9 @@ const SettingsDialog = ({
                     onChange={formik.handleChange}
                     error={!!formik.errors.h200}
                     helperText={formik.errors.h200 ? formik.errors.h200 : null}
+                    InputProps={{
+                      endAdornment: <PickerAdornment field={"h200"} />,
+                    }}
                   />
                   <SettingsInput
                     name="h250"
@@ -217,6 +282,9 @@ const SettingsDialog = ({
                     onChange={formik.handleChange}
                     error={!!formik.errors.h250}
                     helperText={formik.errors.h250 ? formik.errors.h250 : null}
+                    InputProps={{
+                      endAdornment: <PickerAdornment field={"h250"} />,
+                    }}
                   />
                 </Stack>
               </Stack>
@@ -250,12 +318,37 @@ const SettingsDialog = ({
             options={options}
           />
           <DialogActions>
-            <Button onClick={handleClose} color={"error"}>
+            <Button
+              onClick={() => {
+                handleClose();
+                setInnerSettings(settings);
+                formik.resetForm();
+              }}
+              color={"error"}
+            >
               Cancel
             </Button>
             <Button type={"submit"}>Submit</Button>
           </DialogActions>
         </form>
+      </Dialog>
+      <Dialog
+        open={pickerOpen}
+        onClose={handlePickerClose}
+        TransitionComponent={Transition}
+      >
+        <ColorPicker
+          width={456}
+          height={228}
+          color={color}
+          onChange={setColor}
+          hideHSV
+          hideRGB
+          dark
+        />
+        <Button variant="text" onClick={handlePickerClose}>
+          Set Color
+        </Button>
       </Dialog>
     </>
   );

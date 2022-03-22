@@ -5,7 +5,7 @@ export const SettingsInput = styled(TextField)({
   ".MuiInputLabel-formControl": {
     backgroundColor: "#383838",
   },
-  ".MuiInputBase-root": {
+  ".MuiOutlinedInput-root ": {
     backgroundColor: "#383838",
   },
 });
