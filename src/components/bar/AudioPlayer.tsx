@@ -250,7 +250,7 @@ export default function AudioPlayer({
             size="small"
             value={position}
             min={0}
-            step={1}
+            step={0.001}
             max={duration}
             ref={progressRef}
             onChange={(_, value) => {
