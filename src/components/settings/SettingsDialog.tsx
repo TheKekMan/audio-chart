@@ -7,7 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import PaletteIcon from "@mui/icons-material/Palette";
 import { TransitionProps } from "@mui/material/transitions";
-import { VisualizerSettings } from "../../App";
+import { VisualizerSettings } from "../../pages/App";
 import {
   Checkbox,
   FormControl,
@@ -52,8 +52,6 @@ const SettingsDialog = ({
   const [color, setColor] = useColor("hex", "#121212");
   const [innerSettings, setInnerSettings] =
     useState<VisualizerSettings>(settings);
-
-  console.log(settings);
 
   const handlePickerClose = () => {
     setPickerOpen(false);
@@ -114,7 +112,6 @@ const SettingsDialog = ({
             return false;
           }
         }),
-
       loop: Yup.boolean().required(),
     }),
     onSubmit: () => {
@@ -194,11 +191,12 @@ const SettingsDialog = ({
     if (formik.isValid) {
       setInnerSettings(formik.values);
     }
-  }, [formik.isValid]);
+  }, [formik.isValid, formik.values.loop]);
 
   useEffect(() => {
     if (hook) {
       formik.setFieldValue(hook, color.hex, true);
+      console.log(formik.values);
       setInnerSettings(formik.values);
     }
   }, [color]);
