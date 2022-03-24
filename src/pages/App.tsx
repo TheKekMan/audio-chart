@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppMain,
   AppHeader,
@@ -6,7 +6,6 @@ import {
   AppButton,
   SettingsButton,
 } from "./App.style";
-import BarVisualizer from "../components/bar/BarVisualizer";
 import SettingsDialog from "../components/settings/SettingsDialog";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AudioPlayer from "../components/bar/AudioPlayer";
@@ -22,21 +21,29 @@ export interface VisualizerSettings {
   fftSize: number;
 }
 
+const defaultSettings: VisualizerSettings = {
+  h0: "#880afc",
+  h50: "#880afc",
+  h100: "#880afc",
+  h150: "#b975ff",
+  h200: "#b975ff",
+  h250: "#b975ff",
+  loop: true,
+  fftSize: 256,
+};
+
 function App() {
+  if (!localStorage.getItem("settings")) {
+    localStorage.setItem("settings", JSON.stringify(defaultSettings));
+  }
+
   const [fileSelected, setFileSelected] = useState(false);
   const [file, setFile] = useState<File>();
   const [stop, setStop] = useState(false);
   const [open, setOpen] = useState(false);
-  const [settings, setSettings] = useState<VisualizerSettings>({
-    h0: "#880afc",
-    h50: "#880afc",
-    h100: "#880afc",
-    h150: "#b975ff",
-    h200: "#b975ff",
-    h250: "#b975ff",
-    loop: true,
-    fftSize: 256,
-  });
+  const [settings, setSettings] = useState<VisualizerSettings>(
+    JSON.parse(localStorage.getItem("settings")!)
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -65,6 +72,9 @@ function App() {
       alert("File must be audio");
     }
   };
+  useEffect(() => {
+    localStorage.setItem("settings", JSON.stringify(settings));
+  }, [settings]);
   return (
     <AppMain className="App">
       <AppHeader>Audio Visualizer</AppHeader>
