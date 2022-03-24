@@ -19,6 +19,10 @@ declare global {
   }
 }
 
+if (!localStorage.getItem("volume")) {
+  localStorage.setItem("volume", "0.5");
+}
+
 export default function AudioPlayer({
   file,
   handleClose,
@@ -36,7 +40,9 @@ export default function AudioPlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLInputElement>(null);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState<number>(1);
+  const [volume, setVolume] = useState<number>(
+    Number(localStorage.getItem("volume"))
+  );
   const [position, setPosition] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [url, setUrl] = useState("");
@@ -56,12 +62,14 @@ export default function AudioPlayer({
 
   const handleVolumeChange = (event: Event, newValue: number | number[]) => {
     setVolume(newValue as number);
+    localStorage.setItem("volume", newValue.toString());
     if (gainNode) {
-      gainNode.gain.value = volume;
+      gainNode.gain.value = newValue as number;
     }
   };
   function initializeAudio() {
     audioRef.current!.src = URL.createObjectURL(file);
+    gainNode.gain.value = volume;
     setUrl(audioRef.current!.src);
     const track = audioCtx.createMediaElementSource(audioRef.current!);
     analyserNode.fftSize = settings.fftSize;
