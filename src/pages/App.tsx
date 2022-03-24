@@ -6,9 +6,10 @@ import {
   AppButton,
   SettingsButton,
 } from "./App.style";
-import BarVisualizer from "./components/bar/BarVisualizer";
-import SettingsDialog from "./components/settings/SettingsDialog";
+import BarVisualizer from "../components/bar/BarVisualizer";
+import SettingsDialog from "../components/settings/SettingsDialog";
 import SettingsIcon from "@mui/icons-material/Settings";
+import AudioPlayer from "../components/bar/AudioPlayer";
 
 export interface VisualizerSettings {
   h0: string;
@@ -22,10 +23,9 @@ export interface VisualizerSettings {
 }
 
 function App() {
-  const [audioBuffer, setAudioBuffer] = useState<ArrayBuffer>();
   const [fileSelected, setFileSelected] = useState(false);
   const [file, setFile] = useState<File>();
-  const [isStop, setIsStop] = useState(true);
+  const [stop, setStop] = useState(false);
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState<VisualizerSettings>({
     h0: "#880afc",
@@ -47,17 +47,10 @@ function App() {
   };
 
   const handleStop = () => {
-    setIsStop((prev) => !prev);
+    setStop((prev) => !prev);
+    setFileSelected(false);
   };
-
   const handles = { handleClose, handleStop, handleClickOpen };
-  const handleFile = (e: any) => {
-    if (!e.target) return;
-    const content = e.target.result;
-    setAudioBuffer(content);
-    setFileSelected(true);
-    handleStop();
-  };
 
   const handleAudioSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -65,8 +58,8 @@ function App() {
       reader = new FileReader();
     if (file.type.includes("audio")) {
       setFile(file);
-      reader.onloadend = handleFile;
-      reader.readAsArrayBuffer(file);
+      handleStop();
+      setFileSelected(true);
     } else {
       e.target.value = "";
       alert("File must be audio");
@@ -76,7 +69,7 @@ function App() {
     <AppMain className="App">
       <AppHeader>Audio Visualizer</AppHeader>
       <div className="App">
-        {fileSelected && !isStop ? null : (
+        {fileSelected ? null : (
           <>
             <label htmlFor="contained-button-file">
               <Input
@@ -93,12 +86,8 @@ function App() {
           </>
         )}
         <div>
-          {audioBuffer && !isStop ? (
-            <BarVisualizer
-              audioBuffer={audioBuffer}
-              {...handles}
-              settings={settings}
-            />
+          {file && stop ? (
+            <AudioPlayer file={file} {...handles} settings={settings} />
           ) : null}
         </div>
       </div>
