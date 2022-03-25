@@ -19,6 +19,8 @@ export interface VisualizerSettings {
   h250: string;
   loop: boolean;
   fftSize: number;
+  fps: number;
+  floating: boolean;
 }
 
 const defaultSettings: VisualizerSettings = {
@@ -30,6 +32,8 @@ const defaultSettings: VisualizerSettings = {
   h250: "#b975ff",
   loop: true,
   fftSize: 256,
+  fps: 60,
+  floating: false,
 };
 
 function App() {

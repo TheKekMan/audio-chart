@@ -14,6 +14,7 @@ import {
   IconButton,
   InputAdornment,
   Stack,
+  TextField,
 } from "@mui/material";
 import { LoopLabel, SettingsInput } from "./SettingsDialog.style";
 import { useFormik } from "formik";
@@ -113,6 +114,12 @@ const SettingsDialog = ({
           }
         }),
       loop: Yup.boolean().required(),
+      fps: Yup.number()
+        .typeError("Only numbers")
+        .required("Required field")
+        .min(1, "Too small")
+        .max(240, "Ultra PC configuration is required"),
+      floating: Yup.boolean().required(),
     }),
     onSubmit: () => {
       setSettings(innerSettings);
@@ -138,7 +145,8 @@ const SettingsDialog = ({
       },
       y: {
         display: false,
-        max: 300,
+        max: formik.values.floating ? 150 : 300,
+        min: formik.values.floating ? -150 : 0,
         ticks: {
           display: false,
         },
@@ -164,12 +172,20 @@ const SettingsDialog = ({
   ).sort((a, b) => b - a);
   const emptyArray = new Array(innerSettings.fftSize / 4);
   const labels = emptyArray.fill(" ", 0, innerSettings.fftSize / 4);
+  console.log(formik.values);
   const data = {
     labels,
     datasets: [
       {
-        data: musicArray,
+        data:
+          musicArray && formik.values.floating
+            ? musicArray.map((data) => {
+                return [-data * 0.5, data * 0.5];
+              })
+            : musicArray,
         fill: 1,
+        borderRadius: formik.values.floating ? Number.MAX_VALUE : 0,
+        borderSkipped: false,
         gradient: {
           backgroundColor: {
             axis: "y",
@@ -191,7 +207,12 @@ const SettingsDialog = ({
     if (formik.isValid) {
       setInnerSettings(formik.values);
     }
-  }, [formik.isValid, formik.values.loop]);
+  }, [
+    formik.isValid,
+    formik.values.loop,
+    formik.values.fps,
+    formik.values.floating,
+  ]);
 
   useEffect(() => {
     if (hook) {
@@ -297,15 +318,30 @@ const SettingsDialog = ({
                     formik.errors.fftSize ? formik.errors.fftSize : null
                   }
                 />
+                <SettingsInput
+                  name="fps"
+                  label="FPS"
+                  value={formik.values.fps}
+                  onChange={formik.handleChange}
+                  error={!!formik.errors.fps}
+                  helperText={formik.errors.fps ? formik.errors.fps : null}
+                />
+                <LoopLabel
+                  checked={formik.values.loop}
+                  control={
+                    <Checkbox onChange={formik.handleChange} name="loop" />
+                  }
+                  label="Loop"
+                />
                 <LoopLabel
                   control={
                     <Checkbox
-                      defaultChecked
+                      checked={formik.values.floating}
                       onChange={formik.handleChange}
-                      name="loop"
+                      name="floating"
                     />
                   }
-                  label="Loop"
+                  label="Floating"
                 />
               </Stack>
             </DialogContent>

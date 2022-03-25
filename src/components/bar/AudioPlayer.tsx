@@ -165,7 +165,8 @@ export default function AudioPlayer({
       },
       y: {
         display: false,
-        max: 300,
+        max: settings.floating ? 150 : 300,
+        min: settings.floating ? -150 : 0,
         ticks: {
           display: false,
         },
@@ -192,8 +193,15 @@ export default function AudioPlayer({
     labels,
     datasets: [
       {
-        data: musicArray,
+        data:
+          musicArray && settings.floating
+            ? musicArray.map((data) => {
+                return [-data * 0.5, data * 0.5];
+              })
+            : musicArray,
         fill: 1,
+        borderRadius: settings.floating ? Number.MAX_VALUE : 0,
+        borderSkipped: false,
         gradient: {
           backgroundColor: {
             axis: "y",
@@ -211,13 +219,19 @@ export default function AudioPlayer({
     ],
   };
 
+  const fps = settings.fps;
+
   useLayoutEffect(() => {
     if (playing) {
       let timerId: any;
 
+      setInterval(() => {
+        analyserNode.getByteFrequencyData(dataArray);
+      }, 1000 / fps);
+
       const updateFrequency = () => {
         if (audioCtx.state === "suspended") return;
-        analyserNode.getByteFrequencyData(dataArray);
+        // analyserNode.getByteFrequencyData(dataArray);
         setMusicArray(Array.from(dataArray));
 
         timerId = requestAnimationFrame(updateFrequency);
