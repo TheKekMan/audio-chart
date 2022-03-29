@@ -146,7 +146,7 @@ const SettingsDialog = ({
       y: {
         display: false,
         max: formik.values.floating ? 150 : 300,
-        min: formik.values.floating ? -150 : 0,
+        min: formik.values.floating ? -50 : 0,
         ticks: {
           display: false,
         },
@@ -170,18 +170,24 @@ const SettingsDialog = ({
   const musicArray = Array.from({ length: innerSettings.fftSize / 4 }, () =>
     Math.floor(Math.random() * 300)
   ).sort((a, b) => b - a);
-  const emptyArray = new Array(innerSettings.fftSize / 4);
-  const labels = emptyArray.fill(" ", 0, innerSettings.fftSize / 4);
-  console.log(formik.values);
+  const labels = new Array(
+    innerSettings.floating
+      ? innerSettings.fftSize / 2
+      : innerSettings.fftSize / 4
+  ).fill(" ");
   const data = {
     labels,
     datasets: [
       {
         data:
           musicArray && formik.values.floating
-            ? musicArray.map((data) => {
-                return [-data * 0.5, data * 0.5];
-              })
+            ? musicArray
+                .slice()
+                .reverse()
+                .concat(musicArray)
+                .map((data) => {
+                  return [-data * 0.1, data * 0.5];
+                })
             : musicArray,
         fill: 1,
         borderRadius: formik.values.floating ? Number.MAX_VALUE : 0,
