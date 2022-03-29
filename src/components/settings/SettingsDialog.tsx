@@ -146,7 +146,7 @@ const SettingsDialog = ({
       y: {
         display: false,
         max: formik.values.floating ? 150 : 300,
-        min: formik.values.floating ? -50 : 0,
+        min: formik.values.floating ? -20 : 0,
         ticks: {
           display: false,
         },
@@ -186,7 +186,7 @@ const SettingsDialog = ({
                 .reverse()
                 .concat(musicArray)
                 .map((data) => {
-                  return [-data * 0.1, data * 0.5];
+                  return [0, data * 0.5];
                 })
             : musicArray,
         fill: 1,
