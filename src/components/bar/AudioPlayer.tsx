@@ -166,7 +166,7 @@ export default function AudioPlayer({
       y: {
         display: false,
         max: settings.floating ? 150 : 300,
-        min: settings.floating ? -150 : 0,
+        min: settings.floating ? -50 : 0,
         ticks: {
           display: false,
         },
@@ -187,17 +187,23 @@ export default function AudioPlayer({
       },
     },
   };
-  const emptyArray = new Array(settings.fftSize / 2);
-  const labels = emptyArray.fill(" ", 0, settings.fftSize / 2);
+  const labels = new Array(
+    settings.floating ? +settings.fftSize : settings.fftSize / 2
+  ).fill(" ");
+
   const data = {
     labels,
     datasets: [
       {
         data:
           musicArray && settings.floating
-            ? musicArray.map((data) => {
-                return [-data * 0.5, data * 0.5];
-              })
+            ? musicArray
+                .slice()
+                .reverse()
+                .concat(musicArray)
+                .map((data) => {
+                  return [-data * 0.1, data * 0.5];
+                })
             : musicArray,
         fill: 1,
         borderRadius: settings.floating ? Number.MAX_VALUE : 0,
