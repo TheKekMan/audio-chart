@@ -45,13 +45,9 @@ export default function AudioPlayer({
   );
   const [position, setPosition] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [url, setUrl] = useState("");
-  const [audioCtx, setAudioCtx] = useState<AudioContext>(new AudioContext());
-  const [analyserNode, setAnalyserNode] = useState<AnalyserNode>(
-    audioCtx.createAnalyser()
-  );
-  const [gainNode, setGainNode] = useState<GainNode>(audioCtx.createGain());
-  const [track, setTrack] = useState<MediaElementAudioSourceNode>();
+  const [audioCtx] = useState<AudioContext>(new AudioContext());
+  const [analyserNode] = useState<AnalyserNode>(audioCtx.createAnalyser());
+  const [gainNode] = useState<GainNode>(audioCtx.createGain());
   const [dataArray, setDataArray] = useState(new Uint8Array());
 
   function formatDuration(value: number) {
@@ -70,7 +66,6 @@ export default function AudioPlayer({
   function initializeAudio() {
     audioRef.current!.src = URL.createObjectURL(file);
     gainNode.gain.value = volume;
-    setUrl(audioRef.current!.src);
     const track = audioCtx.createMediaElementSource(audioRef.current!);
     analyserNode.fftSize = settings.fftSize;
     const bufferLength = analyserNode.frequencyBinCount;
@@ -78,8 +73,6 @@ export default function AudioPlayer({
     analyserNode.getByteFrequencyData(dataArray);
 
     track.connect(gainNode).connect(analyserNode).connect(audioCtx.destination);
-
-    setTrack(track);
   }
 
   const attachHandlers = () => {
@@ -207,7 +200,6 @@ export default function AudioPlayer({
             : musicArray,
         fill: 1,
         borderRadius: settings.floating ? Number.MAX_VALUE : 0,
-        borderSkipped: false,
         gradient: {
           backgroundColor: {
             axis: "y",
@@ -257,9 +249,7 @@ export default function AudioPlayer({
   }, []);
   return (
     <BarMain>
-      <audio style={{ display: "none" }} ref={audioRef} controls={true}>
-        <source type={"audio/wav"} />
-      </audio>
+      <audio style={{ display: "none" }} ref={audioRef} controls={true} />
       <Stack direction={"row"}>
         <PlayButton size={"large"} onClick={togglePlay}>
           {playing ? <PauseIcon /> : <PlayArrowIcon />}

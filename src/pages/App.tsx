@@ -10,7 +10,11 @@ import SettingsDialog from "../components/settings/SettingsDialog";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AudioPlayer from "../components/bar/AudioPlayer";
 
-export interface VisualizerSettings {
+interface IObjectKeys {
+  [key: string]: string | number | boolean;
+}
+
+export interface VisualizerSettings extends IObjectKeys {
   h0: string;
   h50: string;
   h100: string;
