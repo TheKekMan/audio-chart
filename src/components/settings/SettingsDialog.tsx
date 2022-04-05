@@ -14,7 +14,6 @@ import {
   IconButton,
   InputAdornment,
   Stack,
-  TextField,
 } from "@mui/material";
 import { LoopLabel, SettingsInput } from "./SettingsDialog.style";
 import { useFormik } from "formik";
@@ -61,7 +60,7 @@ const SettingsDialog = ({
 
   const handleClickOpen = (field: string) => {
     setHook(field);
-    const color = toColor("hex", innerSettings[field]);
+    const color = toColor("hex", innerSettings[field] as string);
     setColor(color);
     setPickerOpen(true);
   };
@@ -191,7 +190,6 @@ const SettingsDialog = ({
             : musicArray,
         fill: 1,
         borderRadius: formik.values.floating ? Number.MAX_VALUE : 0,
-        borderSkipped: false,
         gradient: {
           backgroundColor: {
             axis: "y",

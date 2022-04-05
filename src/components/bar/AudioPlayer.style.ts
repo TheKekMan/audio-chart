@@ -1,4 +1,4 @@
-import { styled } from "@mui/system";
+import { styled } from "@mui/material";
 import { IconButton, Typography } from "@mui/material";
 
 export const PlayButton = styled(IconButton)(({ theme }) => ({

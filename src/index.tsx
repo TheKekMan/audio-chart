@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./pages/App";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -16,12 +16,13 @@ const theme = createTheme({
   },
 });
 
-ReactDOM.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <CssBaseline enableColorScheme />
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Failed to find the root element");
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(
+  <ThemeProvider theme={theme}>
+    <CssBaseline enableColorScheme />
+    <App />
+  </ThemeProvider>
 );
